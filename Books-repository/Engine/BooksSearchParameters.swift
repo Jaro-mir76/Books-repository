@@ -145,13 +145,13 @@ enum Language: String, CaseIterable, Identifiable, Codable {
     var displayName: String {
         switch self {
         case .pl:
-            return "Polish"
+            return "pl"
         case .cs:
-            return "Czech"
+            return "cz"
         case .en:
-            return "English"
+            return "en"
         case .es:
-            return "Spanish"
+            return "es"
         case .notAplicable:
             return "---"
         }

@@ -11,6 +11,7 @@ struct SearchView: View {
     @State private var searchText = ""
     @State private var alertVisible: Bool = false
     @State private var languageFilter: Language = .notAplicable
+    @State private var searchType: SearchType = .textSearch
     @EnvironmentObject private var engine: Engine
     @EnvironmentObject private var viewModel: ViewModel
     
@@ -19,19 +20,28 @@ struct SearchView: View {
             VStack {
                 HStack {
                     TextField (text: $searchText) {
-                        Text("Search by author")
+                        Text(searchType == .textSearch ? "Search text" : "Search by author")
                     }
                     .textFieldStyle(.roundedBorder)
                     Button("Search") {
-                        engine.searchBooksInterface( searchByAuthor: searchText, filterbyLanguage: languageFilter)
+                        if searchType == .textSearch {
+                            engine.searchBooksInterface( searchText: searchText, filterbyLanguage: languageFilter)
+                        } else {
+                            engine.searchBooksInterface( searchByAuthor: searchText, filterbyLanguage: languageFilter)
+                        }
                     }
                     .disabled(searchText.isEmpty)
                     .buttonStyle(.borderedProminent)
                 }
                 .padding(5)
                 .background(viewModel.backgroundColor)
-                LanguageFilterView(selection: $languageFilter)
-                let _ = print ("language filter \(languageFilter.rawValue)")
+                HStack {
+                    
+                    SearchTypeView(searchType: $searchType)
+                    let _ = print ("language filter \(languageFilter.rawValue)")
+                    LanguageFilterView(selection: $languageFilter)
+                }
+                
             }
             
             

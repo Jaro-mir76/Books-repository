@@ -1,5 +1,5 @@
 //
-//  LanguageFilterView.swift
+//  SearchTypeView.swift
 //  Books-repository
 //
 //  Created by Jaromir Jagieluk on 10/03/2025.
@@ -7,23 +7,23 @@
 
 import SwiftUI
 
-struct LanguageFilterView: View {
-    @Binding var selection: Language
+struct SearchTypeView: View {
+    @Binding var searchType: SearchType
 
         var body: some View {
             HStack{
-                Text("Language filter")
+                Text("Search in ")
                     .font(.caption2)
                     .textCase(.uppercase)
                     .foregroundColor(.gray)
                 Spacer()
-                Picker("", selection: $selection) {
-                    ForEach(Language.allCases) { language in
-                        Text(language.displayName)
+                Picker("", selection: $searchType) {
+                    ForEach(SearchType.allCases) { searchType in
+                        Text(searchType.displayName)
                             .padding(4)
                             .frame(maxWidth: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 4))
-                            .tag(language)
+                            .tag(searchType)
                     }
                 }
                 .pickerStyle(.menu)
@@ -32,5 +32,5 @@ struct LanguageFilterView: View {
 }
 
 #Preview {
-    LanguageFilterView(selection: .constant(.pl))
+    SearchTypeView(searchType: .constant(.textSearch))
 }
