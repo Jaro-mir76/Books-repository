@@ -43,9 +43,9 @@ enum MyError: Error, LocalizedError {
         case .noInternetConnection:
             return "Check your internet connection and try again"
         case .nothingFound:
-            return "Try to different search"
+            return "Try different search"
         case .unknown:
-            return "Unknown error"
+            return "Try again later"
         }
     }
 }

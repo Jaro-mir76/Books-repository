@@ -10,25 +10,30 @@ import SwiftUI
 struct SearchView: View {
     @State private var searchText = ""
     @State private var alertVisible: Bool = false
+    @State private var languageFilter: Language = .notAplicable
     @EnvironmentObject private var engine: Engine
     @EnvironmentObject private var viewModel: ViewModel
     
     var body: some View {
         NavigationStack {
-            HStack {
-                TextField (text: $searchText) {
-                    Text("Search by author")
+            VStack {
+                HStack {
+                    TextField (text: $searchText) {
+                        Text("Search by author")
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    Button("Search") {
+                        engine.searchBooksInterface( searchByAuthor: searchText, filterbyLanguage: languageFilter)
+                    }
+                    .disabled(searchText.isEmpty)
+                    .buttonStyle(.borderedProminent)
                 }
-                .textFieldStyle(.roundedBorder)
-                Button("Search") {
-                    engine.searchValue = searchText
-                    engine.searchBooks()
-                }
-                .disabled(searchText.isEmpty)
-                .buttonStyle(.borderedProminent)
+                .padding(5)
+                .background(viewModel.backgroundColor)
+                LanguageFilterView(selection: $languageFilter)
+                let _ = print ("language filter \(languageFilter.rawValue)")
             }
-            .padding(5)
-            .background(viewModel.backgroundColor)
+            
             
             ScrollView {
                 LazyVStack (alignment: .center) {
@@ -42,10 +47,10 @@ struct SearchView: View {
                                 Text("Displayed books: \(books.startIndex+1) - \(books.count)")
                                     .font(.caption)
                                 Button("Show more") {
-                                    engine.searchBooks(startIndex: books.count, newSearch: false)
+                                    engine.searchBooksInterface( startIndex: books.count)
                                 }
                             }
-                    }else {
+                    } else {
                         EmptyView()
                     }
                 }

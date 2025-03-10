@@ -9,26 +9,49 @@ import Foundation
 import SwiftUI
 
 class Engine: ObservableObject {
-    let bookInfoURL = "https://www.googleapis.com/books/v1/volumes"
+    let bookSearchURL = "https://www.googleapis.com/books/v1/volumes"
     let googlePlayURL = "https://play.google.com/store/books/details?id="
-    let searchKey = "?q="
-    var searchValue: String = "apple"
-    let searchKeyAuthor = "?inauthor:"
-    let languageFilter = "&langRestrict=cs"
-    var startIndexString = "&startIndex="
-    var maxResultsString = "&maxResults="
-    let sortFromNewest = "&orderBy=newest"
     var totalItemsFound: Int = 0
     @Published var allItems: [Book]? = nil
     @Published var error: MyError? = nil
     var isThereMore: Bool = false
+    var searchParameters: [BooksSearchParameters: BooksSearchParameters] = [:]
     
-    func searchBooks(startIndex: Int = 0, newSearch: Bool = true) {
-        guard let url = URL(string: bookInfoURL + searchKey + searchKeyAuthor + searchValue + languageFilter + startIndexString + String(startIndex)) else {
+    func searchBooksInterface(searchText: String = "", searchByAuthor: String? = nil, filterbyLanguage: Language? = nil, startIndex: Int? = nil, maxResultsDisplay: Pagination? = nil, sortOrder: SortOrder? = nil) {
+        
+        if startIndex == nil {      // it means it is new search and search parameters needs to be initiated with provided value
+    //        Inserting parameters into the searchParameters table
+            searchParameters = [:]
+            searchParameters[.searchText()] = .searchText(searchText)
+            if let searchByAuthor = searchByAuthor {
+                searchParameters[.searchAuthor()] = .searchAuthor(searchByAuthor)
+            }
+            if let filterbyLanguage = filterbyLanguage {
+                searchParameters[.languageFilter()] = .languageFilter(filterbyLanguage)
+            }
+            if let startIndex = startIndex {
+                searchParameters[.startIndex()] = .startIndex(startIndex)
+            }
+            if let maxResultsDisplay = maxResultsDisplay {
+                searchParameters[.maxResults()] = .maxResults(maxResultsDisplay)
+            }
+            if let sortOrder = sortOrder {
+                searchParameters[.sortOrder()] = .sortOrder(sortOrder)
+            }
+        } else {
+            if let startIndex = startIndex {
+                searchParameters[.startIndex()] = .startIndex(startIndex)
+            }
+        }
+        guard let searchQueryURL = prepareSearchQueryURL() else {
             error = MyError.badURL
             return
         }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        searchBooks(searchQueryUrl: searchQueryURL)
+    }
+    
+    func searchBooks(searchQueryUrl: URL) {
+        let task = URLSession.shared.dataTask(with: searchQueryUrl) { data, response, error in
             if let response = response as? HTTPURLResponse, !(200...299).contains(response.statusCode) {
                 DispatchQueue.main.async {
                     self.error = MyError.badServerResponse
@@ -39,18 +62,18 @@ class Engine: ObservableObject {
             if let data = data{
                 do {
                     let answer = try decoder.decode(GServerResponse.self, from: data)
-                    DispatchQueue.main.async {
-                        if newSearch {
+                    DispatchQueue.main.async { [self] in
+                        if answer.items?.count == 0 || answer.items == nil {    // if nothing new found show info and exit
+                            self.error = MyError.nothingFound
+                            return
+                        }
+                        if let _ = self.searchParameters[.startIndex()] {   // if .startIndex paramater exist then we are pulling more info and results have to be added to existing
+                            self.allItems! += answer.items!
+                        } else {    // if .startIndex doesn't exist it means this is new search
                             self.allItems = answer.items
-                            if answer.items?.count == 0 || answer.items == nil {
-                                self.error = MyError.nothingFound
-                                return
-                            }
                             if let totalItemsCount = self.allItems?.count, let totalItemsFound = answer.totalItems {
                                 self.isThereMore = totalItemsCount < totalItemsFound
                             }
-                        }else if self.allItems != nil, let items = answer.items {
-                            self.allItems! += items
                         }
                     }
                 }catch {
@@ -63,6 +86,20 @@ class Engine: ObservableObject {
             }
         }
         task.resume()
+    }
+    
+    func prepareSearchQueryURL() -> URL? {
+        var stringForURL = bookSearchURL
+        for parameter in BooksSearchParameters.allCases {
+            if let parameter = searchParameters[parameter]?.KeyValueString {
+                stringForURL += parameter
+            }
+        }
+        if let url = URL(string: stringForURL) {
+            return url
+        } else {
+            return nil
+        }
     }
     
     func openGooglePlayWebPage(bookId: String) {

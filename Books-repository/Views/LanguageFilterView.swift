@@ -8,11 +8,29 @@
 import SwiftUI
 
 struct LanguageFilterView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+    @Binding var selection: Language
+
+        var body: some View {
+            HStack{
+                Text("Filter by languege")
+                    .font(.footnote)
+                    .textCase(.uppercase)
+                    .foregroundColor(.gray)
+                Spacer()
+                Picker("", selection: $selection) {
+                    ForEach(Language.allCases) { language in
+                        Text(language.displayName)
+                            .padding(4)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .tag(language)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+        }
 }
 
 #Preview {
-    LanguageFilterView()
+    LanguageFilterView(selection: .constant(.pl))
 }
