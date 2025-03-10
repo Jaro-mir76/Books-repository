@@ -44,7 +44,7 @@ struct SearchView: View {
 
                 HStack {
                     if languageFilter.rawValue != "" || searchType == .byAuthor {
-                        Text("Search parameters: ")
+                        Text("Search filters: ")
                             .font(.caption2)
                             .foregroundColor(.gray)
                     }
@@ -58,7 +58,7 @@ struct SearchView: View {
                             .foregroundColor(.blue)
                     }
                     if languageFilter.rawValue != "" {
-                        Text("Language filter:")
+                        Text("Language")
                             .font(.caption2)
                             .foregroundColor(.blue)
                         Text(languageFilter.displayName)
