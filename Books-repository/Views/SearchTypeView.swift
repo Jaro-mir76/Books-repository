@@ -12,7 +12,7 @@ struct SearchTypeView: View {
 
         var body: some View {
             HStack{
-                Text("Search in ")
+                Text("Search")
                     .font(.caption2)
                     .textCase(.uppercase)
                     .foregroundColor(.gray)

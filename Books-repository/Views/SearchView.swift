@@ -12,37 +12,71 @@ struct SearchView: View {
     @State private var alertVisible: Bool = false
     @State private var languageFilter: Language = .notAplicable
     @State private var searchType: SearchType = .textSearch
+    @State private var toolsVisible: Bool = false
     @EnvironmentObject private var engine: Engine
     @EnvironmentObject private var viewModel: ViewModel
     
     var body: some View {
         NavigationStack {
             VStack {
-                HStack {
-                    TextField (text: $searchText) {
-                        Text(searchType == .textSearch ? "Search text" : "Search by author")
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    Button("Search") {
-                        if searchType == .textSearch {
-                            engine.searchBooksInterface( searchText: searchText, filterbyLanguage: languageFilter)
-                        } else {
-                            engine.searchBooksInterface( searchByAuthor: searchText, filterbyLanguage: languageFilter)
+                    HStack {
+                        TextField (text: $searchText) {
+                            Text(searchType == .textSearch ? "Search text" : "Search by author")
+                        }
+                        .textFieldStyle(.roundedBorder)
+                        Button("Search") {
+                            if searchType == .textSearch {
+                                engine.searchBooksInterface( searchText: searchText, filterbyLanguage: languageFilter)
+                            } else {
+                                engine.searchBooksInterface( searchByAuthor: searchText, filterbyLanguage: languageFilter)
+                            }
+                        }
+                        .disabled(searchText.isEmpty)
+                        .buttonStyle(.borderedProminent)
+                        Button(action: {
+                            toolsVisible.toggle()
+                        }) {
+                            Image(systemName: "gear")
                         }
                     }
-                    .disabled(searchText.isEmpty)
-                    .buttonStyle(.borderedProminent)
-                }
-                .padding(5)
-                .background(viewModel.backgroundColor)
+                    .padding(5)
+                    .background(viewModel.backgroundColor)
+
                 HStack {
-                    
-                    SearchTypeView(searchType: $searchType)
-                    let _ = print ("language filter \(languageFilter.rawValue)")
-                    LanguageFilterView(selection: $languageFilter)
+                    if languageFilter.rawValue != "" || searchType == .byAuthor {
+                        Text("Search parameters: ")
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                    }
+                    if searchType == .byAuthor {
+                        Text("by")
+                            .font(.caption2)
+                            .foregroundColor(.blue)
+                        Text("author")
+                            .font(.caption2)
+                            .textCase(.uppercase)
+                            .foregroundColor(.blue)
+                    }
+                    if languageFilter.rawValue != "" {
+                        Text("Language filter:")
+                            .font(.caption2)
+                            .foregroundColor(.blue)
+                        Text(languageFilter.displayName)
+                            .font(.caption2)
+                            .textCase(.uppercase)
+                            .foregroundColor(.blue)
+                    }
                 }
                 
+                if toolsVisible {
+                    HStack {
+                        SearchTypeView(searchType: $searchType)
+                        LanguageFilterView(selection: $languageFilter)
+                    }
+                    .padding(.horizontal, 5)
+                }
             }
+            
             
             
             ScrollView {
