@@ -102,6 +102,21 @@ class Engine: ObservableObject {
         }
     }
     
+    func coverImageExist (book: Book) -> String? {
+        if let smallThumbnail = book.bookInfo?.images?.smallThumbnail {
+            return smallThumbnail
+        } else if let thumbnail = book.bookInfo?.images?.thumbnail {
+            return thumbnail
+        }
+        return nil
+    }
+    
+    func highResolutionCover (image: String) -> String {
+        let hiResCover = image.replacingOccurrences(of: "&zoom=5&", with: "&zoom=10&")
+        let _ = print ("high resolution image url: \(hiResCover)")
+        return hiResCover
+    }
+    
     func openGooglePlayWebPage(bookId: String) {
         if let url = URL(string: googlePlayURL + bookId), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)

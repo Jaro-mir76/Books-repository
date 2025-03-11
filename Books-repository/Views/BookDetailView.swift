@@ -17,7 +17,8 @@ struct BookDetailView: View {
     var body: some View {
         ScrollView {
             VStack {
-                if let thumbnail = book.bookInfo?.images?.smallThumbnail {
+                if let thumbnail = engine.coverImageExist(book: book) {
+                    let _ = print ("thumbnail url: \(thumbnail)")
                     AsyncImage(url: URL(string: thumbnail)) { image in
                         Button(action: {
                             if let _ = book.bookInfo?.images?.thumbnail {
@@ -77,8 +78,9 @@ struct BookDetailView: View {
             Text(error.recoverySuggestion ?? "Unknown error")
         }
         .sheet(isPresented: $coverViewVisible) {
-            if let image = book.bookInfo?.images?.thumbnail {
-                CoverView(image: image)
+            if let image = engine.coverImageExist(book: book) {
+                
+                CoverView(image: engine.highResolutionCover(image: image))
             }
         }
         HStack {
