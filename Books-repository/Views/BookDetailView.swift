@@ -18,7 +18,6 @@ struct BookDetailView: View {
         ScrollView {
             VStack {
                 if let thumbnail = engine.coverImageExist(book: book) {
-                    let _ = print ("thumbnail url: \(thumbnail)")
                     AsyncImage(url: URL(string: thumbnail)) { image in
                         Button(action: {
                             if let _ = book.bookInfo?.images?.thumbnail {

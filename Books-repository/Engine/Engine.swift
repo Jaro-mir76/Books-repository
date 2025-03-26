@@ -16,10 +16,11 @@ class Engine: ObservableObject {
     @Published var error: MyError? = nil
     var isThereMore: Bool = false
     var searchParameters: [BooksSearchParameters: BooksSearchParameters] = [:]
+    var loading = false
     
-    func searchBooksInterface(searchText: String = "", searchByAuthor: String? = nil, filterbyLanguage: Language? = nil, startIndex: Int? = nil, maxResultsDisplay: Pagination? = nil, sortOrder: SortOrder? = nil) {
+    func searchBooksInterface(searchText: String = "", searchByAuthor: String? = nil, filterbyLanguage: Language? = nil, startIndex: Int? = nil, maxResultsDisplay: Pagination? = nil, sortOrder: SortOrder? = nil, pullMore: Bool = false) {
         
-        if startIndex == nil {      // it means it is new search and search parameters needs to be initiated with provided value
+        if pullMore == false {      // it means it is new search and search parameters needs to be initiated with provided value
     //        Inserting parameters into the searchParameters table
             searchParameters = [:]
             searchParameters[.searchText()] = .searchText(searchText)
@@ -39,8 +40,8 @@ class Engine: ObservableObject {
                 searchParameters[.sortOrder()] = .sortOrder(sortOrder)
             }
         } else {
-            if let startIndex = startIndex {
-                searchParameters[.startIndex()] = .startIndex(startIndex)
+            if !allItems!.isEmpty {
+                searchParameters[.startIndex()] = .startIndex(allItems!.count)
             }
         }
         guard let searchQueryURL = prepareSearchQueryURL() else {
@@ -55,6 +56,7 @@ class Engine: ObservableObject {
             if let response = response as? HTTPURLResponse, !(200...299).contains(response.statusCode) {
                 DispatchQueue.main.async {
                     self.error = MyError.badServerResponse
+                    self.loading = false
                 }
                 return
             }
@@ -75,13 +77,16 @@ class Engine: ObservableObject {
                                 self.isThereMore = totalItemsCount < totalItemsFound
                             }
                         }
+                        self.loading = false
                     }
                 }catch {
                     self.error = MyError.parsingProblem
+                    self.loading = false
                 }
             } else {
                 DispatchQueue.main.async {
                     self.error = MyError.noInternetConnection
+                    self.loading = false
                 }
             }
         }
@@ -113,7 +118,7 @@ class Engine: ObservableObject {
     
     func highResolutionCover (image: String) -> String {
         let hiResCover = image.replacingOccurrences(of: "&zoom=5&", with: "&zoom=10&")
-        let _ = print ("high resolution image url: \(hiResCover)")
+//        let _ = print ("high resolution image url: \(hiResCover)")        //...for debuging/checking if there is not image or it's wrong
         return hiResCover
     }
     
