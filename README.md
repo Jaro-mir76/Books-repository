@@ -3,10 +3,10 @@
 This is small application using GoogleBooks API for searching books in their repository.
 
 Key functions:
-> free text search,
+* free text search,
   - filter by author,
   - filter by language,
-> check basing info:
+* check basic info:
   - author,
   - date of publishing,
   - short description,
