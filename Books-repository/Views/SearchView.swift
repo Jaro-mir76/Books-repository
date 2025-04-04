@@ -67,7 +67,7 @@ struct SearchView: View {
             ScrollView {
                 LazyVStack (alignment: .center) {
                     if let books = engine.allItems {
-                        ForEach(books, id: \.id) { book in
+                        ForEach(books, id: \.myID) { book in
                             NavigationLink(value: book.self) {
                                 RowView(book: book)
                             }
@@ -88,8 +88,8 @@ struct SearchView: View {
                 }
                 .scrollTargetLayout()
             }
-            .onScrollTargetVisibilityChange(idType: String.self, threshold: 0.5, { value in
-                if engine.allItems?.last?.id == value.last {
+            .onScrollTargetVisibilityChange(idType: UUID.self, threshold: 0.5, { value in
+                if engine.allItems?.last?.myID == value.last {
                     lastVisible = true
                 } else {
                     lastVisible = false

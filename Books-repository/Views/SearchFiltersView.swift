@@ -17,8 +17,9 @@ struct SearchFiltersView: View {
         VStack {
             HStack (alignment: .bottom) {
                 Text("Filters")
-                    .font(.callout)
-                    .foregroundStyle(.gray)
+                    .font(.caption2)
+                    .textCase(.uppercase)
+                    .foregroundColor(.gray)
                 Spacer()
             }
             .padding(.horizontal, 10)
@@ -54,7 +55,6 @@ struct SearchFiltersView: View {
                 }
             }
             .padding(10)
-//            .background(viewModel.backgroundColor)
         }
     }
 }
