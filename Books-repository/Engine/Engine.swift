@@ -15,20 +15,24 @@ class Engine: ObservableObject {
     @Published var allItems: [Book]? = nil
     @Published var error: MyError? = nil
     var isThereMore: Bool = false
-    var searchParameters: [BooksSearchParameters: BooksSearchParameters] = [:]
     var loading = false
+    @Published var alertVisible: Bool = false
     
-    func searchBooksInterface(searchText: String = "", searchByAuthor: String? = nil, filterbyLanguage: Language? = nil, startIndex: Int? = nil, maxResultsDisplay: Pagination? = nil, sortOrder: SortOrder? = nil, pullMore: Bool = false) {
+    var searchParameters: [BooksSearchParameters: BooksSearchParameters] = [:]
+    @Published var languageFilter: Language = .notAplicable
+    @Published var searchType: SearchType = .textSearch
+    
+    func searchBooksInterface(searchText: String = "", filterAuthor: String? = nil, filterLanguage: Language? = nil, startIndex: Int? = nil, maxResultsDisplay: Pagination? = nil, sortOrder: SortOrder? = nil, pullMore: Bool = false) {
         
         if pullMore == false {      // it means it is new search and search parameters needs to be initiated with provided value
     //        Inserting parameters into the searchParameters table
             searchParameters = [:]
             searchParameters[.searchText()] = .searchText(searchText)
-            if let searchByAuthor = searchByAuthor {
-                searchParameters[.searchAuthor()] = .searchAuthor(searchByAuthor)
+            if let filterAuthor = filterAuthor {
+                searchParameters[.filterAuthor()] = .filterAuthor(filterAuthor)
             }
-            if let filterbyLanguage = filterbyLanguage {
-                searchParameters[.languageFilter()] = .languageFilter(filterbyLanguage)
+            if let filterLanguage = filterLanguage {
+                searchParameters[.filterLanguage()] = .filterLanguage(filterLanguage)
             }
             if let startIndex = startIndex {
                 searchParameters[.startIndex()] = .startIndex(startIndex)

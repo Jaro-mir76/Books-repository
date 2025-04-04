@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @EnvironmentObject private var viewModel: ViewModel
-    var body: some View {
-        SearchView()
-        .padding()
-    }
-}
-
-#Preview {
-    ContentView()
-        .environmentObject(Engine.example())
-        .environmentObject(ViewModel())
-}
+//struct ContentView: View {
+//    @EnvironmentObject private var viewModel: ViewModel
+//    var body: some View {
+//        SearchView()
+//        .padding()
+//    }
+//}
+//
+//#Preview {
+//    ContentView()
+//        .environmentObject(Engine.example())
+//        .environmentObject(ViewModel())
+//}

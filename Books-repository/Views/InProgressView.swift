@@ -9,12 +9,12 @@ import SwiftUI
 
 struct InProgressView: View {
     var body: some View {
-        Label("Load in progress", systemImage: "progress.indicator")
-            .symbolEffect(.rotate.byLayer, options: .repeat(.continuous))
-            .labelStyle(.iconOnly)
+        Image(systemName: "progress.indicator")
+            .symbolEffect(.variableColor)
     }
 }
 
 #Preview {
     InProgressView()
 }
+

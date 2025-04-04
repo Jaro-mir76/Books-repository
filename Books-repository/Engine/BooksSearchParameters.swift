@@ -18,15 +18,15 @@ import Foundation
 enum BooksSearchParameters: CaseIterable, Hashable {
     static let allCases: [Self] = [
         .searchText(),
-        .searchAuthor(),
-        .languageFilter(),
+        .filterAuthor(),
+        .filterLanguage(),
         .startIndex(),
         .maxResults(),
         .sortOrder()
     ]
     case searchText(String? = nil)
-    case searchAuthor(String? = nil)
-    case languageFilter(Language? = nil)
+    case filterAuthor(String? = nil)
+    case filterLanguage(Language? = nil)
     case startIndex(Int? = nil)
     case maxResults(Pagination? = nil)
     case sortOrder(SortOrder? = nil)
@@ -56,13 +56,13 @@ enum BooksSearchParameters: CaseIterable, Hashable {
             } else {
                 return "?q="
             }
-        case .searchAuthor(let text):
+        case .filterAuthor(let text):
             if text != nil {
                 return "+inauthor:" + text!
             } else {
                 return ""
             }
-        case .languageFilter(let language):
+        case .filterLanguage(let language):
             if language != nil {
                 return "&langRestrict=" + language!.rawValue
             } else {
@@ -97,13 +97,13 @@ enum BooksSearchParameters: CaseIterable, Hashable {
             } else {
                 return ""
             }
-        case .searchAuthor(let text):
+        case .filterAuthor(let text):
             if text != nil {
                 return text!
             } else {
                 return ""
             }
-        case .languageFilter(let language):
+        case .filterLanguage(let language):
             if language != nil {
                 return language!.rawValue
             } else {
@@ -145,15 +145,15 @@ enum Language: String, CaseIterable, Identifiable, Codable {
     var displayName: String {
         switch self {
         case .pl:
-            return "pl"
+            return "Polish"
         case .cs:
-            return "cz"
+            return "Czech"
         case .en:
-            return "en"
+            return "English"
         case .es:
-            return "es"
+            return "Spanish"
         case .notAplicable:
-            return "---"
+            return "Any"
         }
     }
 }

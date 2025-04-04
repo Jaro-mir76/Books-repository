@@ -15,7 +15,8 @@ struct Books_repositoryApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SearchView()
+//                .padding()
                 .environmentObject(engine)
                 .environmentObject(viewModel)
         }
